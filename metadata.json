@@ -1,0 +1,6 @@
+{
+  "name": "IMRAX AI",
+  "description": "Your World. Your Intelligence. A multimodal Gemini-powered AI assistant with chat history, voice, vision, PDF analysis, and AI image generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

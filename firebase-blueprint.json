@@ -1,0 +1,158 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile and AI assistant preferences.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address (owner-only)."
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "Profile avatar URL."
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "enum": ["en", "hi", "as"],
+          "description": "Preferred assistant language: English (en), Hindi (hi), or Assamese (as)."
+        },
+        "darkTheme": {
+          "type": "boolean",
+          "description": "Whether dark navy theme is enabled."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when last updated (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": ["userId", "displayName", "preferredLanguage", "darkTheme", "createdAt", "updatedAt"]
+    },
+    "ChatThread": {
+      "title": "ChatThread",
+      "description": "A persistent AI conversation thread owned by a user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the thread owner."
+        },
+        "title": {
+          "type": "string",
+          "description": "Thread title derived from the first prompt or renamed by user."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["chat", "coding", "search", "image", "document"],
+          "description": "Primary assistant mode for the conversation."
+        },
+        "language": {
+          "type": "string",
+          "enum": ["en", "hi", "as"],
+          "description": "Conversation language code."
+        },
+        "lastMessagePreview": {
+          "type": "string",
+          "description": "Truncated preview of the latest message."
+        },
+        "messageCount": {
+          "type": "integer",
+          "description": "Number of messages in the thread."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when last updated (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": ["userId", "title", "mode", "language", "lastMessagePreview", "messageCount", "createdAt", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "An individual message inside a user's chat thread.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Parent ChatThread document ID."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "model"],
+          "description": "Message sender role."
+        },
+        "content": {
+          "type": "string",
+          "description": "Text or markdown content of the message."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["chat", "coding", "search", "image", "document"],
+          "description": "Assistant mode used for this message."
+        },
+        "attachmentType": {
+          "type": "string",
+          "enum": ["none", "image", "pdf", "document", "generated_image"],
+          "description": "Type of attachment or generated media associated with the message."
+        },
+        "attachmentName": {
+          "type": "string",
+          "description": "Display filename or label for an attached document or image."
+        },
+        "sources": {
+          "type": "string",
+          "description": "Bounded array of source links (Title|URL) returned for grounded search responses."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when created (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when updated (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": ["userId", "chatId", "role", "content", "mode", "attachmentType", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Owner-only user profile and app preferences."
+    },
+    "/users/{userId}/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatThread" },
+      "description": "User-scoped AI conversation threads."
+    },
+    "/users/{userId}/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Messages belonging to a specific user chat thread."
+    }
+  }
+}
